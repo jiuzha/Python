@@ -1,0 +1,32 @@
+'''
+一、编程：有一个需求，有专门负责保存记录的文件名是：mylog.log 的文档，若文件大小超过5M，原文件名则变成 mylog1.log ,
+同时另新建一个 mylog.log 文件负责记录数据，若在修改文件名的时候，已经有同名文件存在，先把之前的文件名修改为原序号值加1的文件名，
+若原先已经存在 mylog1.log   mylog2.log ，在修改mylog.log 之前，先把 mylog1.log   mylog2.log  按序号变成 mylog2.log  mylog3.log  
+再把mylog.log 修改为 mylog1.log ，同时再新建 mylog.log 文件，请用os及其相关模块操作实现。
+
+'''
+
+def rename_log(path,name):
+    main_dir,sub_dir,file = next(os.walk(path))
+    tar_file = [i for i in file if name.split('.')[0] in i]
+    print tar_file
+    #匹配数字，从大到小
+    old_num = len(tar_file)-1  #老文件，即改过名字的数量
+
+    for i in range(old_num,0,-1):
+        #拼接老文件名
+        old_name = name.split('.')[0]+str(i)+'.'+name.split('.')[1]
+        new_name = name.split('.')[0]+str(i+1)+'.'+name.split('.')[1]
+        #拼接完整文件名
+        old_name = os.path.join(path,old_name)
+        new_name = os.path.join(path,new_name)
+        # print new_name,old_name
+        #修改名字
+
+        os.rename(old_name,new_name)
+
+    os.rename(os.path.join(path,name),name.split('.')[0]+'1.'+name.split('.')[1])
+
+path = 'E:\\PP\\Review'
+
+rename_log(path,'mylog.log')
