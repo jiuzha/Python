@@ -83,10 +83,101 @@ inn('哈哈')
     test1(a)
 
 
+四、继承
+
+class Grade(object):
+
+    def __init__(self, grade_name):
+        self.grade_name = grade_name
 
 
+class Student(Grade):
+    count_1 = 0
+    count_2 = 0
+    score_dict = {'1班': [], '2班': []}
+
+    def __init__(self, name, score, grade_name):
+        Grade.__init__(self, grade_name)
+        self.name = name
+        self.score = score
+        if self.grade_name == '1班':
+            Student.count_1 += 1
+        if self.grade_name == '2班':
+            Student.count_2 += 1
+        if self.grade_name == '1班':
+            Student.score_dict.get('1班').append(self.score)
+        if self.grade_name == '2班':
+            Student.score_dict.get('2班').append(self.score)
+
+    @staticmethod
+    def rank():
+        avg_1 = (sum(Student.score_dict.get('1班'))) / Student.count_1
+        avg_2 = (sum(Student.score_dict.get('2班'))) / Student.count_2
+
+        if avg_1 > avg_2:
+            print '一班第一'
+
+        elif avg_1 == avg_2:
+            print '排名相等'
+        else:
+            print '二班第一'
 
 
+if __name__ == '__main__':
+
+    student1 = Student('aa', 85, '1班')
+    student2 = Student('bb', 85, '1班')
+    student3 = Student('cc', 85, '2班')
+    student4 = Student('dd', 85, '2班')
+
+    Student.rank()
+
+
+五、session and cookies  
+
+	'''
+把用户名存到cookie,再把该用户名当作session的键
+还能验证登陆状态,还能查询
+
+'''
+
+from flask import session, redirect, make_response, request, Flask, render_template
+
+app = Flask(__name__)
+app.secret_key = 'dsadasd%dsa'
+
+
+@app.route('/')
+def index():
+    user_name = request.cookies.get('user_name')
+    if user_name:
+        if session.get(user_name):
+            return render_template('index.html')
+
+    return redirect('/login')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':  # 判断请求方法
+        user = request.form.get('user')
+        passwd = request.form.get('password')
+        if user == 'test' and passwd == '123456':
+            session[user] = user
+            res = make_response(redirect('/'))
+            res.set_cookie('user_name', user)
+            return res
+    else:
+        user_name = request.cookies.get('user_name')
+        if user_name:
+            if session.get(user_name):
+                return redirect('/')
+
+    return render_template('login.html')
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
 
 
 
