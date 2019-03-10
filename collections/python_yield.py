@@ -114,4 +114,3 @@ def read_file(fpath):
         else:
             return
 
-参考：https://www.ibm.com/developerworks/cn/opensource/os-cn-python-yield/            
